@@ -2,6 +2,7 @@
 # Amazon Order Statistics
 
 Know how many orders you have made and how much you have spent on Amazon!
+
 ## Variables
 
 - `USE_FIREFOX` 
@@ -26,6 +27,8 @@ Last year to be scraped
 - `python3 scraper.py`
 
 ## Requirements
+
 The script is written in Python 3
+
 Firefox or Chrome should be installed on the system
 

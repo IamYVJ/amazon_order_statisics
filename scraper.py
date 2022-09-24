@@ -11,7 +11,7 @@ USE_FIREFOX = True # False for Chrome
 
 USE_DRIVER_MANAGER = True # False if Chrome/Firefox Driver is in PATH
 
-START_YEAR = 2014
+START_YEAR = 2022
 END_YEAR = 2022
 
 def write_csv(filename, data):
@@ -49,6 +49,16 @@ def all_orders(wd):
                 name = order.find_element(By.CLASS_NAME, 'a-fixed-left-grid-col.yohtmlc-item.a-col-right').find_element(By.CLASS_NAME, 'a-row').text.strip()
             except:
                 name = ''
+            if name =='' and number==1 and units==1:
+                try:
+                    number = int(order.find_element(By.CLASS_NAME, 'a-fixed-left-grid-col.a-col-right').text.replace('items in this order', '').strip())
+                    units = number
+                    try:
+                        name = 'Amazon Fresh' if order.find_element(By.CLASS_NAME, 'a-fixed-left-grid-col.a-col-left').find_element(By.XPATH, 'div/img').get_attribute('alt').find('Amazon Fresh')!=-1 else ''
+                    except:
+                        pass
+                except:
+                    pass
             data.append([date, number, units, total, details, name])
         # print('Scraped', len(data))
 
@@ -62,6 +72,7 @@ def all_orders(wd):
             except:
                 # print('No Next II')
                 break
+    data = data[::-1]
     return data
 
 def main():

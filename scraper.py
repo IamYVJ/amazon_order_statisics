@@ -2,6 +2,14 @@ from selenium import webdriver
 from selenium.webdriver.common.by import By
 from time import sleep
 import csv
+from selenium.webdriver.chrome.service import Service as ChromeService
+from selenium.webdriver.firefox.service import Service as FirefoxService
+from webdriver_manager.chrome import ChromeDriverManager
+from webdriver_manager.firefox import GeckoDriverManager
+
+USE_FIREFOX = True # False for Chrome
+
+USE_DRIVER_MANAGER = True # False if Chrome/Firefox Driver is in PATH
 
 START_YEAR = 2014
 END_YEAR = 2022
@@ -43,7 +51,7 @@ def all_orders(wd):
                 name = ''
             data.append([date, number, units, total, details, name])
         # print('Scraped', len(data))
-        # print('===', len(wd.find_elements(By.CLASS_NAME, 'a-disabled.a-last')))
+
         if len(wd.find_elements(By.CLASS_NAME, 'a-disabled.a-last'))>0:
             # print('No Next')
             break
@@ -61,9 +69,19 @@ def main():
     print('                 Amazon Order Statistics')
     print('---------------------------------------------------------')
     try:
-        years = list(range(START_YEAR, END_YEAR + 1))
-
-        wd = webdriver.Firefox()
+        years = list(range(START_YEAR, END_YEAR + 1))   
+        if USE_FIREFOX:
+            if USE_DRIVER_MANAGER:
+                service = FirefoxService(executable_path=GeckoDriverManager().install())
+                wd = webdriver.Firefox(service=service)
+            else:
+                wd = webdriver.Firefox()
+        else:
+            if USE_DRIVER_MANAGER:
+                service = ChromeService(executable_path=ChromeDriverManager().install())
+                wd = webdriver.Chrome(service=service)
+            else:
+                wd = webdriver.Chrome()
         # wd.implicitly_wait(20)
         wd.get('https://www.amazon.in/ap/signin?openid.pape.max_auth_age=0&openid.return_to=https%3A%2F%2Fwww.amazon.in%2F%3Fref_%3Dnav_signin&openid.identity=http%3A%2F%2Fspecs.openid.net%2Fauth%2F2.0%2Fidentifier_select&openid.assoc_handle=inflex&openid.mode=checkid_setup&openid.claimed_id=http%3A%2F%2Fspecs.openid.net%2Fauth%2F2.0%2Fidentifier_select&openid.ns=http%3A%2F%2Fspecs.openid.net%2Fauth%2F2.0&')
         input('Press Enter After Login...')
